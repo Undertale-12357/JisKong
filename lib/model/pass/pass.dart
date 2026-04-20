@@ -18,4 +18,5 @@ class Pass {
     // TODO: implement toString
     return "Pass(id: $id, type: $type, expirationDate: $expirationDate, isActive: $isActive)";
   }
+  
 }

@@ -1,4 +1,6 @@
-import 'package:jis_kong/model/booking/booking.dart';
+// import 'package:jis_kong/model/booking/booking.dart';
+
+import '../../model/booking/booking.dart';
 
 class BookingDTO {
   static const String idKey = 'id';

@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:jis_kong/ui/screens/pass/view_model/pass_view_model.dart';
+<<<<<<< HEAD
 import 'package:jis_kong/ui/screens/pass/widget/pass_selection_list.dart';
 import 'package:jis_kong/ui/screens/pass/widget/pass_status_header.dart';
 import 'package:jis_kong/ui/theme/theme.dart';
+=======
+import 'package:jis_kong/ui/screens/pass/widget/pass_content.dart';
+>>>>>>> rith
 import 'package:provider/provider.dart';
 
 class PassScreen extends StatelessWidget {
@@ -10,6 +14,7 @@ class PassScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+<<<<<<< HEAD
     final viewModel = context.watch<PassViewModel>();
     final user = viewModel.currentUser;
     final activePass = viewModel.activePassDetails;
@@ -51,3 +56,11 @@ class PassScreen extends StatelessWidget {
     );
   }
 }
+=======
+    return ChangeNotifierProvider(
+      create: (_) => PassViewModel(),
+      child: const PassContent(),
+    );
+  }
+}
+>>>>>>> rith
