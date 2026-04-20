@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
 class SuccessScreen extends StatelessWidget {
-  const SuccessScreen({super.key});
+final String price;
+  final String passName;
 
+  const SuccessScreen({super.key, required this.price, required this.passName});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,7 +35,7 @@ class SuccessScreen extends StatelessWidget {
               const Text("+855 99294142", style: TextStyle(color: Colors.grey)),
               const SizedBox(height: 20),
               const Text("Enter Amount", style: TextStyle(color: Colors.grey, fontSize: 14)),
-              const Text("2150 \$", style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
+              Text("$price \$", style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
               
               const SizedBox(height: 40),
               
@@ -54,8 +56,8 @@ class SuccessScreen extends StatelessWidget {
                 ),
                 child: Column(
                   children: [
-                    _detailRow("Amount Paid:", "2150 \$"),
-                    _detailRow("To:", "ABA BANK"),
+                    _detailRow("Amount Paid:", "$price \$"),
+                    _detailRow("To:", passName),
                     _detailRow("Transaction ID:", "ILS973"),
                     _detailRow("Date & Time:", "2nd March 2026, 12:45 PM"),
                   ],
@@ -64,10 +66,8 @@ class SuccessScreen extends StatelessWidget {
 
               const Spacer(),
 
-              // Download Receipt Button
               OutlinedButton.icon(
                 onPressed: () {
-                  // Navigate back to the main app/subscription screen
                   Navigator.of(context).popUntil((route) => route.isFirst);
                 },
                 icon: const Icon(Icons.download),

@@ -12,11 +12,12 @@ class PassScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final viewModel = context.watch<PassViewModel>();
     final user = viewModel.currentUser;
+    final activePass = viewModel.activePassDetails;
 
     return Scaffold(
       backgroundColor: const Color(0xFFF9F9F9),
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 2, 
+        currentIndex: 2,
         selectedItemColor: JisKongTheme.primaryOrange,
         items: const [
           BottomNavigationBarItem(
@@ -40,7 +41,7 @@ class PassScreen extends StatelessWidget {
                 padding: const EdgeInsets.all(16),
                 child: Column(
                   children: [
-                    PassStatusHeader(user: user),
+                    PassStatusHeader(user: user, activePass: activePass),
                     const SizedBox(height: 24),
                     const PassSelectionList(),
                   ],

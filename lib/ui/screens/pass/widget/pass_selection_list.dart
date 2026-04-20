@@ -12,8 +12,9 @@ class PassSelectionList extends StatelessWidget {
   Widget build(BuildContext context) {
     final viewModel = context.watch<PassViewModel>();
     final activePassId = viewModel.currentUser?.activePassId;
+    final activeType = viewModel.activePassDetails?.type;
 
-   void _navigateToPayment(BuildContext context, PassType type, double price) {
+    void _navigateToPayment(BuildContext context, PassType type, double price) {
       context.read<PassViewModel>().setPendingPurchase(type, price);
 
       Navigator.push(
@@ -31,7 +32,7 @@ class PassSelectionList extends StatelessWidget {
           period: "per day",
           ridesPerDay: "2 Rides per day",
           ebikeAccess: "Standard Bikes Only",
-          isSelected: false,
+          isSelected: activeType == PassType.day,
           onTap: () => _navigateToPayment(context, PassType.day, 7.0),
         ),
         _buildPassCard(
@@ -42,7 +43,7 @@ class PassSelectionList extends StatelessWidget {
           ridesPerDay: "10 Rides per day",
           ebikeAccess: "Includes 2 Electric Rides/day",
           isPopular: true,
-          isSelected: activePassId != null,
+          isSelected: activeType == PassType.monthly,
           onTap: () => _navigateToPayment(context, PassType.monthly, 200.0),
         ),
         _buildPassCard(
@@ -53,7 +54,7 @@ class PassSelectionList extends StatelessWidget {
           ridesPerDay: "Unlimited Rides",
           ebikeAccess: "Unlimited Electric Bikes",
           badge: "BEST VALUE",
-          isSelected: false,
+          isSelected: activeType == PassType.annual,
           onTap: () => _navigateToPayment(context, PassType.annual, 2150.0),
         ),
       ],
@@ -91,7 +92,7 @@ class PassSelectionList extends StatelessWidget {
         ],
       ),
       child: Stack(
-        alignment: Alignment.topCenter, 
+        alignment: Alignment.topCenter,
         children: [
           if (isPopular || badge != null)
             Positioned(
@@ -164,7 +165,7 @@ class PassSelectionList extends StatelessWidget {
                 const SizedBox(height: 30),
 
                 SizedBox(
-                  width: 200, 
+                  width: 200,
                   child: ElevatedButton(
                     onPressed: isSelected ? null : onTap,
                     style: ElevatedButton.styleFrom(

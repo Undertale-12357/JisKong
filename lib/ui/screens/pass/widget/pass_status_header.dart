@@ -1,13 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:jis_kong/model/pass/pass.dart';
 import 'package:jis_kong/model/user/user.dart';
 
 class PassStatusHeader extends StatelessWidget {
   final User? user;
-  const PassStatusHeader({super.key, this.user});
+  final Pass? activePass;
+  const PassStatusHeader({super.key, this.user, this.activePass});
 
   @override
   Widget build(BuildContext context) {
     bool hasPass = user?.activePassId != null;
+
+    String passTitle = "No Active Pass";
+    if (hasPass && activePass != null) {
+      passTitle =
+          "${activePass!.type.name[0].toUpperCase()}${activePass!.type.name.substring(1)} Pass";
+    }
 
     return Container(
       padding: const EdgeInsets.all(20),
@@ -42,7 +50,7 @@ class PassStatusHeader extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           Text(
-            hasPass ? "Monthly Pass" : "No Active Pass",
+            passTitle,
             style: const TextStyle(
               color: Colors.white,
               fontSize: 24,

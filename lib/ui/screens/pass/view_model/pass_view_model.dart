@@ -10,10 +10,12 @@ class PassViewModel extends ChangeNotifier {
 
   PassViewModel(this._userRepo, this._passRepo);
 
+  Pass? _activePassDetails;
   bool _isLoading = false;
   String? _errorMessage;
   User? _currentUser;
 
+  Pass? get activePassDetails => _activePassDetails;
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
   User? get currentUser => _currentUser;
@@ -22,6 +24,11 @@ class PassViewModel extends ChangeNotifier {
     _setLoading(true);
     try {
       _currentUser = await _userRepo.getUserById(uid);
+      if (_currentUser?.activePassId != null) {
+        _activePassDetails = await _passRepo.getPassById(
+          _currentUser!.activePassId!,
+        );
+      }
       _errorMessage = null;
     } catch (e) {
       _errorMessage = "Failed to load profile: $e";
@@ -36,12 +43,11 @@ class PassViewModel extends ChangeNotifier {
 
     try {
       final Pass newPass = await _passRepo.createPass(type);
-
       await _userRepo.updateActivePass(uid, newPass.id);
 
-      _currentUser = await _userRepo.getUserById(uid);
+      await init(uid);
 
-      print("Purchase successful for ${type.name}");
+      notifyListeners();
     } catch (e) {
       _errorMessage = "Purchase failed: $e";
     } finally {
@@ -82,7 +88,7 @@ class PassViewModel extends ChangeNotifier {
   void setPendingPurchase(PassType type, double price) {
     _pendingPassType = type;
     _pendingPrice = price;
-    notifyListeners(); 
+    notifyListeners();
   }
 
   void _setLoading(bool value) {

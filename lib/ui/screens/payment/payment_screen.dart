@@ -61,7 +61,12 @@ class PaymentSelectionScreen extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const SuccessScreen(),
+                      builder: (context) =>  SuccessScreen(
+                        price: viewModel.pendingPrice.toString(),
+                        passName:
+                            viewModel.pendingPassType?.name.toUpperCase() ??
+                            "PASS",
+                      ),
                     ),
                   );
                 }
