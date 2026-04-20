@@ -1,7 +1,10 @@
+import 'dart:js_interop';
+
 import 'package:jis_kong/model/booking/booking.dart';
 
 class BookingDTO {
   static const String idKey = 'id';
+  static const String userKey = 'userId';
   static const String stationKey = 'stationId';
   static const String bikeKey = 'bikeId';
   static const String slotKey = 'slotId';
@@ -10,12 +13,14 @@ class BookingDTO {
 
   static Booking fromJson(Map<String, dynamic> json) {
     assert(json[idKey] is String);
+    assert(json[userKey] is String);
     assert(json[stationKey] is String);
     assert(json[bikeKey] is String);
     assert(json[slotKey] is String);
 
     return Booking(
       id: json[idKey],
+      userId: json[userKey],
       stationId: json[stationKey],
       bikeId: json[bikeKey],
       slotId: json[slotKey],
