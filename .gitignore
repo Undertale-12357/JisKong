@@ -43,3 +43,6 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Add these lines to your .gitignore
+**/flutter/generated_plugins.cmake
