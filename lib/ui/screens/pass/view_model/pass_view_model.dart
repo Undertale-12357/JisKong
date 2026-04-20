@@ -50,6 +50,42 @@ class PassViewModel extends ChangeNotifier {
     }
   }
 
+  Future<bool> processMockPayment(double amount) async {
+    _setLoading(true);
+
+    await Future.delayed(const Duration(seconds: 2));
+
+    _setLoading(false);
+    return true;
+  }
+
+  Future<void> handlePurchaseFlow(
+    String uid,
+    PassType type,
+    double price,
+  ) async {
+    final success = await processMockPayment(price);
+
+    if (success) {
+      await buyPass(uid, type);
+    } else {
+      _errorMessage = "Payment Declined by Bank";
+      notifyListeners();
+    }
+  }
+
+  PassType? _pendingPassType;
+  double _pendingPrice = 0.0;
+
+  PassType? get pendingPassType => _pendingPassType;
+  double get pendingPrice => _pendingPrice;
+
+  void setPendingPurchase(PassType type, double price) {
+    _pendingPassType = type;
+    _pendingPrice = price;
+    notifyListeners(); 
+  }
+
   void _setLoading(bool value) {
     _isLoading = value;
     notifyListeners();

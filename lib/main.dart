@@ -1,45 +1,35 @@
-import 'dart:convert';
-import 'package:http/http.dart' as http;
+import 'package:flutter/material.dart';
+import 'package:jis_kong/data/repositories/pass/pass_repository_firebase.dart';
+import 'package:jis_kong/data/repositories/user/user_repository_firebase.dart';
+import 'package:jis_kong/ui/screens/pass/pass_screen.dart';
+import 'package:jis_kong/ui/screens/pass/view_model/pass_view_model.dart';
+import 'package:provider/provider.dart';
 
-Future<void> seedPasses() async {
-  final String baseUrl =
-      'https://jiskong-default-rtdb.asia-southeast1.firebasedatabase.app';
-  final Uri url = Uri.parse('$baseUrl/passes.json');
+void main() {
+  final userRepo = UserRepositoryFirebase();
+  final passRepo = PassRepositoryFirebase();
 
-  print('Attempting to seed passes to: $url');
-
-  try {
-    // Initial data matching your PassDTO keys
-    final Map<String, dynamic> initialPasses = {
-      "template_day": {
-        "type": "day",
-        "expirationDate": DateTime.now()
-            .add(const Duration(days: 1))
-            .toIso8601String(),
-        "isActive": true,
-      },
-      "template_monthly": {
-        "type": "monthly",
-        "expirationDate": DateTime.now()
-            .add(const Duration(days: 30))
-            .toIso8601String(),
-        "isActive": true,
-      },
-    };
-
-    // Using PATCH here so we don't delete existing passes if they exist
-    final response = await http.patch(url, body: json.encode(initialPasses));
-
-    if (response.statusCode == 200) {
-      print('✅ Success! Passes node initialized in Firebase.');
-    } else {
-      print('❌ Failed: ${response.statusCode}');
-    }
-  } catch (e) {
-    print('❌ Error: $e');
-  }
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (_) => PassViewModel(userRepo, passRepo)..init("user_001"),
+        ),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
-void main() async {
-  await seedPasses();
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Jis Kong',
+      theme: ThemeData(primarySwatch: Colors.blue, useMaterial3: true),
+      home: PassScreen(),
+    );
+  }
 }
