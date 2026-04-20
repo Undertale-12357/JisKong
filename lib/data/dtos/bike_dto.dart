@@ -1,4 +1,6 @@
-import 'package:jis_kong/model/bike/bike.dart';
+// import 'package:jis_kong/model/bike/bike.dart';
+
+import '../../model/bike/bike.dart';
 
 class BikeDTO {
   static const String idKey = 'id';

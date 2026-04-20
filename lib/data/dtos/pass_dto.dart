@@ -1,4 +1,6 @@
-import 'package:jis_kong/model/pass/pass.dart';
+// import 'package:jis_kong/model/pass/pass.dart';
+
+import '../../model/pass/pass.dart';
 
 class PassDto {
   static const String idKey = 'id';
