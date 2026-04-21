@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:jis_kong/ui/screens/map/view_model/map_view_model.dart';
 import 'package:jis_kong/ui/widgets/appbar.dart';
-import 'package:jis_kong/ui/widgets/navbart.dart';
 import 'package:provider/provider.dart';
 
 class MapContent extends StatelessWidget {
