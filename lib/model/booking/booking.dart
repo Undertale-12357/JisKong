@@ -1,4 +1,4 @@
-enum Status { Booking, Conpleted, Cancelled }
+enum Status { Booking, Completed, Cancelled }
 
 class Booking {
   final String id;

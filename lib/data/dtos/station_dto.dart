@@ -1,5 +1,8 @@
-import 'package:jis_kong/data/dtos/slot_dto.dart';
-import 'package:jis_kong/model/station/station.dart';
+// import 'package:jis_kong/data/dtos/slot_dto.dart';
+// import 'package:jis_kong/model/station/station.dart';
+
+import '../../model/station/station.dart';
+import 'slot_dto.dart';
 
 class StationDto {
   static const String idKey = 'id';

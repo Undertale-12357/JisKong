@@ -1,5 +1,3 @@
-import 'dart:js_interop';
-
 import 'package:jis_kong/model/booking/booking.dart';
 
 class BookingDTO {
@@ -25,7 +23,7 @@ class BookingDTO {
       bikeId: json[bikeKey],
       slotId: json[slotKey],
       bookingTime: json[timeKey],
-      status: json[statusKey],
+      status: Status.values.firstWhere((e) => e.name == json[statusKey], orElse: () => Status.Booking),
     );
   }
 
@@ -36,7 +34,7 @@ class BookingDTO {
       bikeKey: booking.bikeId,
       slotKey: booking.slotId,
       timeKey: booking.bookingTime,
-      statusKey: booking.status,
+      statusKey: booking.status.name,
     };
   }
 }

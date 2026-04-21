@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'view_model/my_ride_view_model.dart';
 import 'widget/my_ride_content.dart';
 
@@ -10,10 +11,18 @@ class MyRidesScreen extends StatefulWidget {
 }
 
 class _MyRidesScreenState extends State<MyRidesScreen> {
-  final MyRideViewModel _viewModel = MyRideViewModel();
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<MyRideViewModel>().loadRides("user_001");
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    final viewModel = context.watch<MyRideViewModel>();
+
     return Scaffold(
       backgroundColor: const Color(0xFFF8F4EB),
       bottomNavigationBar: BottomNavigationBar(
@@ -36,7 +45,7 @@ class _MyRidesScreenState extends State<MyRidesScreen> {
           ),
         ],
       ),
-      body: SafeArea(child: MyRideContent(viewModel: _viewModel)),
+      body: SafeArea(child: MyRideContent(viewModel: viewModel)),
     );
   }
 }

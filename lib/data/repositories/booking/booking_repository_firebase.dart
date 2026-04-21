@@ -10,7 +10,6 @@ class BookingRepositoryFirebase implements BookingRepo {
 
   @override
   Future<void> createBooking(Booking booking) async {
-    // We use PATCH or PUT with the booking ID as the key
     final response = await http.put(
       Uri.parse('$_baseUrl/bookings/${booking.id}.json'),
       body: json.encode(BookingDTO.toJson(booking)),
@@ -22,8 +21,19 @@ class BookingRepositoryFirebase implements BookingRepo {
   }
 
   @override
+  Future<void> updateBooking(Booking booking) async {
+    final response = await http.put(
+      Uri.parse('$_baseUrl/bookings/${booking.id}.json'),
+      body: json.encode(BookingDTO.toJson(booking)),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception("Could not update booking status");
+    }
+  }
+
+  @override
   Future<void> cancelBooking(String bookingId) async {
-    // Update status to 'cancelled'
     final response = await http.patch(
       Uri.parse('$_baseUrl/bookings/$bookingId.json'),
       body: json.encode({'status': 'cancelled'}),
@@ -48,10 +58,12 @@ class BookingRepositoryFirebase implements BookingRepo {
             bData['id'] = entry.key;
             return BookingDTO.fromJson(bData);
           })
-          .where((booking) => booking.userId == userId) 
+          .where((booking) => booking.userId == userId && booking.status == Status.Booking) 
           .toList();
     } else {
       throw Exception("Failed to fetch bookings");
     }
   }
+
+  
 }

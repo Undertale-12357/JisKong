@@ -1,5 +1,8 @@
-import 'package:jis_kong/data/dtos/bike_dto.dart';
-import 'package:jis_kong/model/bike/slot.dart';
+// import 'package:jis_kong/data/dtos/bike_dto.dart';
+// import 'package:jis_kong/model/bike/slot.dart';
+
+import '../../model/bike/slot.dart';
+import 'bike_dto.dart';
 
 class SlotDTO {
   static const String idKey = 'id';

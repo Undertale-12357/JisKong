@@ -1,4 +1,6 @@
-import 'package:jis_kong/model/bike/bike.dart';
+// import 'package:jis_kong/model/bike/bike.dart';
+
+import 'bike.dart';
 
 class Slot {
   final String id;
