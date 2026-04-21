@@ -10,7 +10,7 @@ class Pass {
     required this.id,
     required this.type,
     required this.expirationDate,
-    required this.isActive,
+    this.isActive = true,
   });
 
   @override
