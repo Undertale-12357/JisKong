@@ -10,21 +10,42 @@ class StationRepositoryFirebase implements StationRepo {
   final String _baseUrl =
       "https://jiskong-default-rtdb.asia-southeast1.firebasedatabase.app/";
 
+  // lib/data/repositories/stations/station_repository_firebase.dart
+
   @override
   Future<List<Station>> getStations() async {
     final response = await http.get(Uri.parse('$_baseUrl/stations.json'));
 
     if (response.statusCode == 200) {
-      final Map<String, dynamic>? data = json.decode(response.body);
-      if (data == null) return [];
+      final dynamic decodedData = json.decode(response.body);
+      if (decodedData == null) return [];
 
-      return data.entries.map((entry) {
-        final stationData = Map<String, dynamic>.from(entry.value);
-        stationData['id'] = entry.key;
-        return StationDto.fromJson(stationData);
-      }).toList();
+      if (decodedData is List) {
+        return decodedData
+            .where(
+              (item) => item != null,
+            )
+            .map((item) {
+              final stationData = Map<String, dynamic>.from(item);
+              return StationDto.fromJson(stationData);
+            })
+            .toList();
+      }
+
+      if (decodedData is Map) {
+        final Map<String, dynamic> dataMap = Map<String, dynamic>.from(
+          decodedData,
+        );
+        return dataMap.entries.map((entry) {
+          final stationData = Map<String, dynamic>.from(entry.value);
+          stationData['id'] = entry.key;
+          return StationDto.fromJson(stationData);
+        }).toList();
+      }
+
+      return [];
     } else {
-      throw Exception("Failed to load stations");
+      throw Exception("Failed to load stations: ${response.statusCode}");
     }
   }
 
