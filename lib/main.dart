@@ -1,24 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:jis_kong/data/repositories/pass/pass_repository_firebase.dart';
-import 'package:jis_kong/data/repositories/user/user_repository_firebase.dart';
-import 'package:jis_kong/ui/screens/pass/pass_screen.dart';
-import 'package:jis_kong/ui/screens/pass/view_model/pass_view_model.dart';
+import 'package:jis_kong/data/repositories/stations/station_repository_firebase.dart';
+import 'package:jis_kong/ui/screens/map/view_model/map_view_model.dart';
+import 'package:jis_kong/ui/screens/my_ride/view_model/my_ride_view_model.dart';
 import 'package:provider/provider.dart';
+import 'data/repositories/booking/booking_repository_firebase.dart';
+import 'ui/screens/map/map_screen.dart';
+import 'ui/screens/my_ride/my_ride_screen.dart';
 
 void main() {
-  final userRepo = UserRepositoryFirebase();
-  final passRepo = PassRepositoryFirebase();
-
-  runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(
-          create: (_) => PassViewModel(userRepo, passRepo)..init("user_001"),
-        ),
-      ],
-      child: const MyApp(),
-    ),
-  );
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -26,10 +16,34 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Jis Kong',
-      theme: ThemeData(primarySwatch: Colors.blue, useMaterial3: true),
-      home: PassScreen(),
+    return MultiProvider(
+      providers: [
+        Provider<StationRepositoryFirebase>(
+          create: (_) => StationRepositoryFirebase(),
+        ),
+        Provider<BookingRepositoryFirebase>(
+          create: (_) => BookingRepositoryFirebase(),
+        ),
+
+        ChangeNotifierProvider(
+          create: (context) =>
+              MapViewModel(context.read<StationRepositoryFirebase>()),
+        ),
+        ChangeNotifierProvider(
+          create: (context) =>
+              MyRideViewModel(context.read<BookingRepositoryFirebase>()),
+        ),
+      ],
+      child: MaterialApp(
+        title: 'Jis Kong',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(primarySwatch: Colors.deepOrange, useMaterial3: true),
+        initialRoute: '/',
+        routes: {
+          '/': (context) => const MapScreen(),
+          '/my_rides': (context) => const MyRidesScreen(),
+        },
+      ),
     );
   }
 }
