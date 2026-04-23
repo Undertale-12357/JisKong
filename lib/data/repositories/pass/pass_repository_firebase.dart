@@ -10,7 +10,6 @@ class PassRepositoryFirebase implements PassRepo {
 
   @override
   Future<Pass> createPass(PassType type) async {
-    // We point to the 'passes.json' endpoint
     final Uri url = Uri.parse('$baseUrl/passes.json');
 
     final response = await http.post(

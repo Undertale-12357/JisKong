@@ -8,4 +8,6 @@ abstract class UserRepo {
   Future<void> updateActivePass(String uid, String? passId);
 
   Future<void> updateCurrentBooking(String uid, String? bookingId);
+
+  Future<void> updateRideCounts(String userId, {required int standardChange, required int electricChange});
 }
