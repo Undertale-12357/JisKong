@@ -150,7 +150,7 @@ class BikeSelectionScreen extends StatelessWidget {
                                       .loadRides(userId);
                                   if (!context.mounted) return;
                                   Navigator.pop(
-                                    context,
+                                    context, true
                                   ); 
                                   onBookingSuccess(); 
                                 } else if (!success && context.mounted) {
@@ -160,7 +160,7 @@ class BikeSelectionScreen extends StatelessWidget {
                                         .read<MyRideViewModel>()
                                         .loadRides(userId);
                                     if (!context.mounted) return;
-                                    Navigator.pop(context);
+                                    Navigator.pop(context, true);
                                     onBookingSuccess();
                                     return;
                                   }

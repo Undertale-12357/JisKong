@@ -94,14 +94,17 @@ class MapViewModel extends ChangeNotifier {
           title: station.name,
           snippet: "${station.availableBikesCount} bikes available",
         ),
-        onTap: () {
-          Navigator.push(
+        onTap: () async{
+          final result = await Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (_) => BikeSelectionScreen(station: station, onBookingSuccess: onSwitchToRides,
+              builder: (_) => BikeSelectionScreen(station: station, onBookingSuccess: (){},
             ),
             ),
           );
+          if (result == true) {
+            onSwitchToRides();
+          }
         },
       );
     }).toSet();
