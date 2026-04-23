@@ -2,10 +2,12 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:jis_kong/data/repositories/booking/booking_repository_firebase.dart';
+import 'package:jis_kong/data/repositories/user/user_repository_firebase.dart';
 import '../../../../model/booking/booking.dart';
 
 class MyRideViewModel extends ChangeNotifier {
   final BookingRepositoryFirebase _bookingRepo;
+  final UserRepositoryFirebase _userRepo;
 
   List<Booking> _userBookings = [];
   bool _isLoading = false;
@@ -15,10 +17,23 @@ class MyRideViewModel extends ChangeNotifier {
   final String activeBookingStatus = "No Active Bookings";
   final String bookingSubtitle = "Find a station and book your next ride!";
 
-  MyRideViewModel(this._bookingRepo);
+  MyRideViewModel(this._bookingRepo, this._userRepo);
 
   List<Booking> get userBookings => _userBookings;
   bool get isLoading => _isLoading;
+
+  List<Booking> get activeBookings => _userBookings
+      .where(
+        (b) => b.status == Status.Booking,
+      )
+      .toList();
+
+  List<Booking> get recentBookings => _userBookings
+      .where(
+        (b) => b.status != Status.Booking,
+      )
+      .toList();
+
   Duration get rideDuration => _rideDuration;
 
   void startTimer(DateTime startTime) {
@@ -66,26 +81,42 @@ class MyRideViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> endCurrentRide(Booking booking) async {
-    _timer?.cancel();
-    _rideDuration = Duration.zero;
+  Future<void> completeBooking(Booking booking) async {
+  _isLoading = true;
+  notifyListeners();
+  try {
+    await _bookingRepo.completeBooking(booking.id);  
+    await _userRepo.updateCurrentBooking(booking.userId, null);
+    await loadRides(booking.userId);
+  } catch (e) {
+    debugPrint("Complete Error: $e");
+  } finally {
+    _isLoading = false;
+    notifyListeners();
+  }
+}
+
+  Future<void> cancelBooking(Booking booking) async {
+    _isLoading = true;
+    notifyListeners();
 
     try {
-      final updatedBooking = Booking(
-        id: booking.id,
-        userId: booking.userId,
-        stationId: booking.stationId,
-        bikeId: booking.bikeId,
-        slotId: booking.slotId,
-        bookingTime: booking.bookingTime,
-        status: Status.Completed,
-      );
+      bool isElectric = booking.bikeId.startsWith("E");
+      await _bookingRepo.cancelBooking(booking.id);
 
-      await _bookingRepo.updateBooking(updatedBooking);
+      await _userRepo.updateRideCounts(
+        booking.userId,
+        standardChange: isElectric ? 0 : 1,
+        electricChange: isElectric ? 1 : 0,
+      );
+      await _userRepo.updateCurrentBooking(booking.userId, null);
 
       await loadRides(booking.userId);
     } catch (e) {
-      debugPrint("Error ending ride: $e");
+      debugPrint("Cancel Error: $e");
+    } finally {
+      _isLoading = false;
+      notifyListeners();
     }
   }
 

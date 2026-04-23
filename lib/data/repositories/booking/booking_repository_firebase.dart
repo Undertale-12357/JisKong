@@ -52,18 +52,31 @@ class BookingRepositoryFirebase implements BookingRepo {
       final Map<String, dynamic>? data = json.decode(response.body);
       if (data == null) return [];
 
-      return data.entries
+      final bookings = data.entries
           .map((entry) {
             final bData = Map<String, dynamic>.from(entry.value);
             bData['id'] = entry.key;
             return BookingDTO.fromJson(bData);
           })
-          .where((booking) => booking.userId == userId && booking.status == Status.Booking) 
+          .where((booking) => booking.userId == userId)
           .toList();
+
+      bookings.sort((a, b) => b.bookingTime.compareTo(a.bookingTime));
+      return bookings;
     } else {
       throw Exception("Failed to fetch bookings");
     }
   }
 
-  
+  @override
+  Future<void> completeBooking(String bookingId) async {
+    final response = await http.patch(
+      Uri.parse('$_baseUrl/bookings/$bookingId.json'),
+      body: json.encode({'status': 'Completed'}),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception("Failed to complete booking");
+    }
+  }
 }
