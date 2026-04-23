@@ -10,8 +10,9 @@ import 'package:jis_kong/data/repositories/user/user_repository_firebase.dart';
 
 class BikeSelectionScreen extends StatelessWidget {
   final Station station;
+  final VoidCallback onBookingSuccess;
 
-  const BikeSelectionScreen({super.key, required this.station});
+  const BikeSelectionScreen({super.key, required this.station, required this.onBookingSuccess});
 
   @override
   Widget build(BuildContext context) {
@@ -144,35 +145,25 @@ class BikeSelectionScreen extends StatelessWidget {
                                 );
 
                                 if (success && context.mounted) {
-                                  await context.read<MyRideViewModel>().loadRides(
-                                    userId,
-                                  );
-
+                                  await context
+                                      .read<MyRideViewModel>()
+                                      .loadRides(userId);
                                   if (!context.mounted) return;
-
-                                  debugPrint("Navigating to my_rides screen");
-                                  Navigator.pushNamed(
+                                  Navigator.pop(
                                     context,
-                                    '/my_rides',
-                                    // (route) => route.isFirst,
-                                  );
+                                  ); 
+                                  onBookingSuccess(); 
                                 } else if (!success && context.mounted) {
                                   if (vm.errorMessage ==
                                       "You already have an active booking.") {
                                     await context
                                         .read<MyRideViewModel>()
                                         .loadRides(userId);
-
                                     if (!context.mounted) return;
-
-                                    Navigator.pushNamedAndRemoveUntil(
-                                      context,
-                                      '/my_rides',
-                                      (route) => route.isFirst,
-                                    );
+                                    Navigator.pop(context);
+                                    onBookingSuccess();
                                     return;
                                   }
-
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
                                       content: Text(

@@ -18,12 +18,7 @@ class MainNavigationScreen extends StatefulWidget {
 
 class _MainNavigationScreenState extends State<MainNavigationScreen> {
   late int _selectedIndex;
-
-  final List<Widget> _screens = [
-    const MapScreen(), 
-    const MyRidesScreen(), 
-    const PassScreen(), 
-  ];
+  int _myRidesKey = 0; 
 
   @override
   void initState() {
@@ -37,12 +32,18 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     });
 
     if (index == 1) {
-      context.read<MyRideViewModel>().loadRides("user_001");
+      // context.read<MyRideViewModel>().loadRides("user_001");
+      _myRidesKey++; 
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final List<Widget> screens = [
+      MapScreen(onSwitchToRides: () => _onItemTapped(1)), 
+      MyRidesScreen(key: ValueKey(_myRidesKey) ,onBrowseStations: () => _onItemTapped(0)), 
+      const PassScreen(),
+    ];
     return Scaffold(
       appBar: CustomAppBar(
         title: _selectedIndex == 0
@@ -51,7 +52,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
             ? "My Rides"
             : "Subscription",
       ),
-      body: IndexedStack(index: _selectedIndex, children: _screens),
+      body: IndexedStack(index: _selectedIndex, children: screens),
       bottomNavigationBar: NavBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,

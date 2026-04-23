@@ -8,7 +8,8 @@ import 'package:jis_kong/ui/widgets/appbar.dart';
 import 'package:provider/provider.dart';
 
 class MapContent extends StatelessWidget {
-  const MapContent({super.key});
+  final VoidCallback onSwitchToRides;
+  const MapContent({super.key, required this.onSwitchToRides});
 
   @override
   Widget build(BuildContext context) {
@@ -75,7 +76,7 @@ class MapContent extends StatelessWidget {
             myLocationEnabled: true,
             myLocationButtonEnabled: false,
             zoomControlsEnabled: false,
-            markers: vm.markers(context),
+            markers: vm.markers(context, onSwitchToRides),
           ),
         ),
 

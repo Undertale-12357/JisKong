@@ -5,4 +5,5 @@ abstract class BookingRepo {
   Future<void> cancelBooking(String bookingId);
   Future<List<Booking>> getUserBookings(String userId);
   Future<void> updateBooking(Booking booking);
+  Future<void> completeBooking(String bookingId);
 }

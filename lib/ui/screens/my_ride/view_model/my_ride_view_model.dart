@@ -81,6 +81,21 @@ class MyRideViewModel extends ChangeNotifier {
     }
   }
 
+  Future<void> completeBooking(Booking booking) async {
+  _isLoading = true;
+  notifyListeners();
+  try {
+    await _bookingRepo.completeBooking(booking.id);  
+    await _userRepo.updateCurrentBooking(booking.userId, null);
+    await loadRides(booking.userId);
+  } catch (e) {
+    debugPrint("Complete Error: $e");
+  } finally {
+    _isLoading = false;
+    notifyListeners();
+  }
+}
+
   Future<void> cancelBooking(Booking booking) async {
     _isLoading = true;
     notifyListeners();

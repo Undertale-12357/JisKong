@@ -5,7 +5,8 @@ import 'package:provider/provider.dart';
 import 'view_model/my_ride_view_model.dart';
 
 class MyRidesScreen extends StatefulWidget {
-  const MyRidesScreen({super.key});
+  final VoidCallback onBrowseStations;
+  const MyRidesScreen({super.key, required this.onBrowseStations});
 
   @override
   State<MyRidesScreen> createState() => _MyRidesScreenState();
@@ -37,6 +38,7 @@ class _MyRidesScreenState extends State<MyRidesScreen> {
                 : ListView(
                     padding: const EdgeInsets.only(bottom: 24),
                     children: [
+                      if (vm.activeBooking == null) _buildBrowseStationsButton(),
                       if (vm.activeBooking != null) ...[
                         const Padding(
                           padding: EdgeInsets.fromLTRB(20, 20, 20, 4),
@@ -51,6 +53,7 @@ class _MyRidesScreenState extends State<MyRidesScreen> {
                         ActiveRideCard(
                           booking: vm.activeBooking!,
                           onCancel: () => vm.cancelBooking(vm.activeBooking!),
+                          onComplete: () => vm.completeBooking(vm.activeBooking!),
                         ),
                       ],
                       if (vm.recentBookings.isNotEmpty) ...[
@@ -89,6 +92,25 @@ class _MyRidesScreenState extends State<MyRidesScreen> {
         child: Text(
           "My Rides",
           style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBrowseStationsButton() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+      child: ElevatedButton.icon(
+        onPressed: widget.onBrowseStations,
+        icon: const Icon(Icons.location_on),
+        label: const Text("Browse Stations"),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.orange,
+          foregroundColor: Colors.white,
+          minimumSize: const Size(double.infinity, 50),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
         ),
       ),
     );
@@ -175,7 +197,7 @@ class _MyRidesScreenState extends State<MyRidesScreen> {
           ),
           const SizedBox(height: 24),
           ElevatedButton(
-            onPressed: () => Navigator.pushNamed(context, '/map'),
+            onPressed: widget.onBrowseStations,
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.orange,
               padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),

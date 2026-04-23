@@ -84,7 +84,7 @@ class MapViewModel extends ChangeNotifier {
     }
   }
 
-  Set<Marker> markers(BuildContext context) {
+  Set<Marker> markers(BuildContext context, VoidCallback onSwitchToRides) {
     return _stations.map((station) {
       return Marker(
         markerId: MarkerId(station.id),
@@ -98,7 +98,8 @@ class MapViewModel extends ChangeNotifier {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => BikeSelectionScreen(station: station),
+              builder: (_) => BikeSelectionScreen(station: station, onBookingSuccess: onSwitchToRides,
+            ),
             ),
           );
         },
