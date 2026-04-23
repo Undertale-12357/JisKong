@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:jis_kong/model/booking/booking.dart';
 import 'package:jis_kong/ui/screens/my_ride/widget/active_ride_card.dart';
 import 'package:provider/provider.dart';
 import 'view_model/my_ride_view_model.dart';
@@ -31,17 +32,41 @@ class _MyRidesScreenState extends State<MyRidesScreen> {
           Expanded(
             child: vm.isLoading
                 ? const Center(child: CircularProgressIndicator())
-                : vm.activeBookings.isEmpty
+                : vm.activeBooking == null && vm.recentBookings.isEmpty
                 ? _buildEmptyState()
-                : ListView.builder(
-                    itemCount: vm.activeBookings.length,
-                    itemBuilder: (context, index) {
-                      final booking = vm.activeBookings[index];
-                      return ActiveRideCard(
-                        booking: booking,
-                        onCancel: () => vm.cancelBooking(booking), 
-                      );
-                    },
+                : ListView(
+                    padding: const EdgeInsets.only(bottom: 24),
+                    children: [
+                      if (vm.activeBooking != null) ...[
+                        const Padding(
+                          padding: EdgeInsets.fromLTRB(20, 20, 20, 4),
+                          child: Text(
+                            "Active Ride",
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        ActiveRideCard(
+                          booking: vm.activeBooking!,
+                          onCancel: () => vm.cancelBooking(vm.activeBooking!),
+                        ),
+                      ],
+                      if (vm.recentBookings.isNotEmpty) ...[
+                        const Padding(
+                          padding: EdgeInsets.fromLTRB(20, 20, 20, 8),
+                          child: Text(
+                            "Recent Rides",
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        ...vm.recentBookings.map(_buildRecentRideCard),
+                      ],
+                    ],
                   ),
           ),
         ],
@@ -69,6 +94,74 @@ class _MyRidesScreenState extends State<MyRidesScreen> {
     );
   }
 
+  Widget _buildRecentRideCard(Booking booking) {
+    final statusText = booking.status.name;
+    final statusColor = booking.status == Status.Completed
+        ? Colors.green
+        : Colors.redAccent;
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: statusColor.withOpacity(0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(Icons.history_rounded, color: statusColor),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  booking.stationId,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  "Bike: ${booking.bikeId}",
+                  style: const TextStyle(color: Colors.grey),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  "Status: $statusText",
+                  style: TextStyle(
+                    color: statusColor,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  booking.bookingTime.toString(),
+                  style: const TextStyle(color: Colors.grey, fontSize: 12),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildEmptyState() {
     return Center(
       child: Column(
@@ -82,9 +175,8 @@ class _MyRidesScreenState extends State<MyRidesScreen> {
           ),
           const SizedBox(height: 24),
           ElevatedButton(
-            onPressed: () =>
-                Navigator.pushNamed(context, '/map'), 
-              style: ElevatedButton.styleFrom(
+            onPressed: () => Navigator.pushNamed(context, '/map'),
+            style: ElevatedButton.styleFrom(
               backgroundColor: Colors.orange,
               padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
               shape: RoundedRectangleBorder(

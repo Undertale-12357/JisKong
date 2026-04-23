@@ -58,9 +58,9 @@ class MyApp extends StatelessWidget {
         initialRoute: '/',
         routes: {
           // '/': (context) => const HomeScreen(),
-          '/map': (context) => const MapScreen(), 
+          '/map': (context) => const MainNavigationScreen(initialIndex: 0),
           '/my_rides': (context) =>
-              const MyRidesScreen(), 
+              const MainNavigationScreen(initialIndex: 1),
         },
       ),
     );

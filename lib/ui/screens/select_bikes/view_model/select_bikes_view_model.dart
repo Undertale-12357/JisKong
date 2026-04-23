@@ -84,7 +84,15 @@ class BikeSelectionViewModel extends ChangeNotifier {
       if (user.activePassId == null) {
         throw "You need an active pass to book a bike.";
       }
-      final pass = await _passRepo.getPassById(user.activePassId!);
+
+      final userBookings = await _bookingRepo.getUserBookings(userId);
+      final hasActiveBooking = userBookings.any(
+        (booking) => booking.status == Status.Booking,
+      );
+      if (hasActiveBooking) {
+        throw "You already have an active booking.";
+      }
+
       final bool isElectric = bike.bikeType.name.toLowerCase().contains(
         'electric',
       );
@@ -118,6 +126,8 @@ class BikeSelectionViewModel extends ChangeNotifier {
       );
 
       await _bookingRepo.createBooking(newBooking);
+      await _userRepo.updateCurrentBooking(userId, newBooking.id);
+
       _setLoading(false);
       return true;
     } catch (e) {

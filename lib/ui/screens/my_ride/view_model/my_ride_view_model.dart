@@ -27,6 +27,13 @@ class MyRideViewModel extends ChangeNotifier {
         (b) => b.status == Status.Booking,
       )
       .toList();
+
+  List<Booking> get recentBookings => _userBookings
+      .where(
+        (b) => b.status != Status.Booking,
+      )
+      .toList();
+
   Duration get rideDuration => _rideDuration;
 
   void startTimer(DateTime startTime) {
@@ -87,6 +94,7 @@ class MyRideViewModel extends ChangeNotifier {
         standardChange: isElectric ? 0 : 1,
         electricChange: isElectric ? 1 : 0,
       );
+      await _userRepo.updateCurrentBooking(booking.userId, null);
 
       await loadRides(booking.userId);
     } catch (e) {
