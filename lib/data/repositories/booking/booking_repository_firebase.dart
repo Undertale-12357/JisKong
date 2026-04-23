@@ -68,5 +68,15 @@ class BookingRepositoryFirebase implements BookingRepo {
     }
   }
 
-  
+  @override
+  Future<void> completeBooking(String bookingId) async {
+    final response = await http.patch(
+      Uri.parse('$_baseUrl/bookings/$bookingId.json'),
+      body: json.encode({'status': 'Completed'}),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception("Failed to complete booking");
+    }
+  }
 }

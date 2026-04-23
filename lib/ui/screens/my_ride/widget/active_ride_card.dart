@@ -4,8 +4,9 @@ import 'package:jis_kong/model/booking/booking.dart';
 class ActiveRideCard extends StatelessWidget {
   final Booking booking;
   final VoidCallback onCancel;
+  final VoidCallback onComplete;
 
-  const ActiveRideCard({super.key, required this.booking, required this.onCancel});
+  const ActiveRideCard({super.key, required this.booking, required this.onCancel, required this.onComplete});
 
   String get _unlockCode => booking.unlockCode?.toString() ?? "----";
 
@@ -64,6 +65,19 @@ class ActiveRideCard extends StatelessWidget {
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   ),
                   child: const Text("Cancel Ride"),
+                ),
+              ),
+              const SizedBox(width: 12),       
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: onComplete,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green.shade50,
+                    foregroundColor: Colors.green,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                  child: const Text("Complete"),
                 ),
               ),
             ],
