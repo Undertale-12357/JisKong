@@ -9,9 +9,11 @@ class ActiveRideCard extends StatelessWidget {
   const ActiveRideCard({super.key, required this.booking, required this.onCancel, required this.onComplete});
 
   String get _unlockCode => booking.unlockCode?.toString() ?? "----";
+  bool get _isElectric => booking.bikeId.startsWith("E");
 
   @override
   Widget build(BuildContext context) {
+    final bikeColor = _isElectric ? Colors.blue : Colors.orange;
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       padding: const EdgeInsets.all(20),
@@ -22,9 +24,27 @@ class ActiveRideCard extends StatelessWidget {
       ),
       child: Column(
         children: [
+          Container(
+            width: 64,
+            height: 64,
+            decoration: BoxDecoration(
+              color: bikeColor.withOpacity(0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              _isElectric ? Icons.electric_bike_rounded : Icons.directions_bike_rounded,
+              color: bikeColor,
+              size: 32,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            _isElectric ? "Electric Bike" : "Standard Bike",
+            style: TextStyle(color: bikeColor, fontWeight: FontWeight.w600, fontSize: 13),
+          ),
+          const SizedBox(height: 16),
           Row(
             children: [
-              const Icon(Icons.location_on, color: Colors.orange, size: 28),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(

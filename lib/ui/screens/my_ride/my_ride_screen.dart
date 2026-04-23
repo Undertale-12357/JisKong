@@ -33,9 +33,9 @@ class _MyRidesScreenState extends State<MyRidesScreen> {
           Expanded(
             child: vm.isLoading
                 ? const Center(child: CircularProgressIndicator())
-                : vm.activeBooking == null && vm.recentBookings.isEmpty
-                ? _buildEmptyState()
-                : ListView(
+                : vm.activeBooking == null 
+                  ? _buildNoActiveState(vm)
+                  : ListView(
                     padding: const EdgeInsets.only(bottom: 24),
                     children: [
                       if (vm.activeBooking == null) _buildBrowseStationsButton(),
@@ -116,11 +116,88 @@ class _MyRidesScreenState extends State<MyRidesScreen> {
     );
   }
 
+  Widget _buildNoActiveState(MyRideViewModel vm) {
+    return ListView(
+      padding: const EdgeInsets.only(bottom: 24),
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 40, 20, 20),
+          child: Column(
+            children: [
+              Container(
+                width: 100,
+                height: 100,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade100,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.directions_bike_rounded,
+                  size: 52,
+                  color: Colors.grey.shade400,
+                ),
+              ),
+              const SizedBox(height: 20),
+              const Text(
+                "No Active Bookings",
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF2D2D2D),
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                "Find a station and book your next ride!",
+                style: TextStyle(color: Colors.grey.shade500, fontSize: 14),
+              ),
+              const SizedBox(height: 28),
+              ElevatedButton(
+                onPressed: widget.onBrowseStations,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.orange,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 36,
+                    vertical: 14,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  elevation: 0,
+                ),
+                child: const Text(
+                  "Browse Stations",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        // Still show recent rides below if any exist
+        if (vm.recentBookings.isNotEmpty) ...[
+          const Padding(
+            padding: EdgeInsets.fromLTRB(20, 8, 20, 8),
+            child: Text(
+              "Recent Rides",
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+          ),
+          ...vm.recentBookings.map(_buildRecentRideCard),
+        ],
+      ],
+    );
+  }
   Widget _buildRecentRideCard(Booking booking) {
     final statusText = booking.status.name;
     final statusColor = booking.status == Status.Completed
         ? Colors.green
         : Colors.redAccent;
+    final bool isElectric = booking.bikeId.startsWith("E");
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
@@ -139,12 +216,19 @@ class _MyRidesScreenState extends State<MyRidesScreen> {
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(12),
+            width: 52,
+            height: 52,
             decoration: BoxDecoration(
-              color: statusColor.withOpacity(0.1),
+              color: isElectric ? Colors.blue.shade50 : Colors.orange.shade50,
               shape: BoxShape.circle,
             ),
-            child: Icon(Icons.history_rounded, color: statusColor),
+            child: Icon(
+              isElectric
+                  ? Icons.electric_bike_rounded
+                  : Icons.directions_bike_rounded,
+              color: isElectric ? Colors.blue : Colors.orange,
+              size: 26,
+            ),
           ),
           const SizedBox(width: 14),
           Expanded(
@@ -161,15 +245,7 @@ class _MyRidesScreenState extends State<MyRidesScreen> {
                 const SizedBox(height: 4),
                 Text(
                   "Bike: ${booking.bikeId}",
-                  style: const TextStyle(color: Colors.grey),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  "Status: $statusText",
-                  style: TextStyle(
-                    color: statusColor,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: const TextStyle(color: Colors.grey, fontSize: 13),
                 ),
                 const SizedBox(height: 2),
                 Text(
@@ -179,35 +255,19 @@ class _MyRidesScreenState extends State<MyRidesScreen> {
               ],
             ),
           ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildEmptyState() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.directions_bike, size: 80, color: Colors.grey.shade300),
-          const SizedBox(height: 16),
-          const Text(
-            "No active bookings",
-            style: TextStyle(color: Colors.grey, fontSize: 16),
-          ),
-          const SizedBox(height: 24),
-          ElevatedButton(
-            onPressed: widget.onBrowseStations,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.orange,
-              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            decoration: BoxDecoration(
+              color: statusColor.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(20),
             ),
-            child: const Text(
-              "Browse Stations",
-              style: TextStyle(color: Colors.white),
+            child: Text(
+              statusText,
+              style: TextStyle(
+                color: statusColor,
+                fontWeight: FontWeight.w600,
+                fontSize: 12,
+              ),
             ),
           ),
         ],
